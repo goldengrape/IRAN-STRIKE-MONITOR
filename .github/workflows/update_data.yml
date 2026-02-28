@@ -35,8 +35,8 @@ jobs:
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
 
-          # Only commit if data.json has changed
-          git add data/data.json
+          # Only commit if data files have changed
+          git add data/data.json data/history.json data/rss.xml
 
           # Use diff to check for changes to avoid failing the workflow when there are none
           if git diff --staged --quiet; then

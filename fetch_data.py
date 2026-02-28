@@ -80,9 +80,70 @@ if __name__ == "__main__":
     # Ensure data directory exists
     os.makedirs("data", exist_ok=True)
 
-    # Write to JSON
+    # Write to current JSON
     with open("data/data.json", "w", encoding="utf-8") as f:
         json.dump(market_data, f, indent=4)
 
-    print("Market data updated successfully.")
-    print(json.dumps(market_data, indent=2))
+    # Maintain historical data
+    history_file = "data/history.json"
+    history = []
+    if os.path.exists(history_file):
+        try:
+            with open(history_file, "r", encoding="utf-8") as f:
+                history = json.load(f)
+        except json.JSONDecodeError:
+            print(f"Error reading {history_file}, starting fresh.")
+            history = []
+
+    # Append new data point
+    history.append(market_data)
+
+    # Save history back
+    with open(history_file, "w", encoding="utf-8") as f:
+        json.dump(history, f, indent=4)
+
+    # Generate RSS Feed
+    rss_file = "data/rss.xml"
+    rss_items = ""
+    # Sort history to have newest items first in RSS
+    sorted_history = sorted(history, key=lambda x: x["timestamp"], reverse=True)
+
+    # Cap RSS at last 30 items to keep feed size manageable
+    for item in sorted_history[:30]:
+        pub_date = datetime.datetime.fromisoformat(item["timestamp"]).strftime("%a, %d %b %Y %H:%M:%S +0000")
+
+        if "error" in item:
+            description = f"Error fetching data: {item['error']}"
+        else:
+            inds = item["indicators"]
+            description = (
+                f"VIX: {inds['VIX']['value']} | "
+                f"Brent Oil: {inds['Brent_Oil']['value']} $/bbl | "
+                f"10Y Yield: {inds['US_10Y_Yield']['value']} % | "
+                f"SPY Weekly Change: {inds['SPY_Weekly_Change']['value']} % | "
+                f"HYG Weekly Change: {inds['HYG_Weekly_Change']['value']} %"
+            )
+
+        rss_items += f"""
+        <item>
+            <title>Market Data Update: {pub_date}</title>
+            <description>{description}</description>
+            <pubDate>{pub_date}</pubDate>
+            <guid isPermaLink="false">{item["timestamp"]}</guid>
+        </item>"""
+
+    rss_content = f"""<?xml version="1.0" encoding="UTF-8" ?>
+<rss version="2.0">
+    <channel>
+        <title>Geopolitical Market Dashboard RSS Feed</title>
+        <description>Daily updates on key macroeconomic indicators (VIX, Brent, US10Y, SPY, HYG) tracking geopolitical risks.</description>
+        <link>https://github.com/jules-11467788464661651638/geopolitical-dashboard</link>
+        <lastBuildDate>{datetime.datetime.now(datetime.timezone.utc).strftime("%a, %d %b %Y %H:%M:%S +0000")}</lastBuildDate>
+        {rss_items}
+    </channel>
+</rss>"""
+
+    with open(rss_file, "w", encoding="utf-8") as f:
+        f.write(rss_content)
+
+    print("Market data, history, and RSS feed updated successfully.")
