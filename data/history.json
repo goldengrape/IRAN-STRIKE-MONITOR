@@ -1,0 +1,187 @@
+[
+    {
+        "timestamp": "2026-02-28T19:37:26.830788+00:00",
+        "indicators": {
+            "VIX": {
+                "value": 19.86,
+                "threshold": 20,
+                "unit": ""
+            },
+            "Brent_Oil": {
+                "value": 72.48,
+                "threshold": 90,
+                "unit": "$/bbl"
+            },
+            "US_10Y_Yield": {
+                "value": 3.96,
+                "threshold": 4.5,
+                "unit": "%"
+            },
+            "SPY_Weekly_Change": {
+                "value": -0.5,
+                "threshold": -3.0,
+                "unit": "%"
+            },
+            "HYG_Weekly_Change": {
+                "value": -0.35,
+                "threshold": -1.0,
+                "unit": "%"
+            }
+        }
+    },
+    {
+        "timestamp": "2026-02-28T19:38:06.470554+00:00",
+        "indicators": {
+            "VIX": {
+                "value": 19.86,
+                "threshold": 20,
+                "unit": ""
+            },
+            "Brent_Oil": {
+                "value": 72.48,
+                "threshold": 90,
+                "unit": "$/bbl"
+            },
+            "US_10Y_Yield": {
+                "value": 3.96,
+                "threshold": 4.5,
+                "unit": "%"
+            },
+            "SPY_Weekly_Change": {
+                "value": -0.5,
+                "threshold": -3.0,
+                "unit": "%"
+            },
+            "HYG_Weekly_Change": {
+                "value": -0.35,
+                "threshold": -1.0,
+                "unit": "%"
+            }
+        }
+    },
+    {
+        "timestamp": "2026-02-28T20:22:18.899564+00:00",
+        "error": "name 'pd' is not defined",
+        "indicators": {
+            "VIX": {
+                "value": 0,
+                "threshold": 20,
+                "unit": ""
+            },
+            "Brent_Oil": {
+                "value": 0,
+                "threshold": 90,
+                "unit": "$/bbl"
+            },
+            "US_10Y_Yield": {
+                "value": 0,
+                "threshold": 4.5,
+                "unit": "%"
+            },
+            "SPY_Weekly_Change": {
+                "value": 0,
+                "threshold": -3.0,
+                "unit": "%"
+            },
+            "HYG_Weekly_Change": {
+                "value": 0,
+                "threshold": -1.0,
+                "unit": "%"
+            }
+        },
+        "historical_trends": {
+            "dates": [],
+            "VIX": [],
+            "Brent_Oil": [],
+            "US_10Y_Yield": [],
+            "SPY": [],
+            "HYG": []
+        }
+    },
+    {
+        "timestamp": "2026-02-28T20:22:32.080258+00:00",
+        "indicators": {
+            "VIX": {
+                "value": 19.86,
+                "threshold": 20,
+                "unit": ""
+            },
+            "Brent_Oil": {
+                "value": 72.48,
+                "threshold": 90,
+                "unit": "$/bbl"
+            },
+            "US_10Y_Yield": {
+                "value": 3.96,
+                "threshold": 4.5,
+                "unit": "%"
+            },
+            "SPY_Weekly_Change": {
+                "value": -0.5,
+                "threshold": -3.0,
+                "unit": "%"
+            },
+            "HYG_Weekly_Change": {
+                "value": -0.35,
+                "threshold": -1.0,
+                "unit": "%"
+            }
+        },
+        "historical_trends": {
+            "dates": [
+                "2026-02-19",
+                "2026-02-20",
+                "2026-02-23",
+                "2026-02-24",
+                "2026-02-25",
+                "2026-02-26",
+                "2026-02-27"
+            ],
+            "VIX": [
+                20.229999542236328,
+                19.09000015258789,
+                21.010000228881836,
+                19.549999237060547,
+                17.93000030517578,
+                18.6299991607666,
+                19.860000610351562
+            ],
+            "Brent_Oil": [
+                71.66000366210938,
+                71.76000213623047,
+                71.48999786376953,
+                70.7699966430664,
+                70.8499984741211,
+                70.75,
+                72.4800033569336
+            ],
+            "US_10Y_Yield": [
+                4.074999809265137,
+                4.085999965667725,
+                4.0289998054504395,
+                4.0329999923706055,
+                4.047999858856201,
+                4.017000198364258,
+                3.9619998931884766
+            ],
+            "SPY": [
+                684.47998046875,
+                689.4299926757812,
+                682.3900146484375,
+                687.3499755859375,
+                693.1500244140625,
+                689.2999877929688,
+                685.989990234375
+            ],
+            "HYG": [
+                80.94000244140625,
+                81.0,
+                80.87000274658203,
+                80.80999755859375,
+                80.91999816894531,
+                80.8499984741211,
+                80.72000122070312
+            ]
+        }
+    }
+]
