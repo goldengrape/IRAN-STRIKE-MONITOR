@@ -1,0 +1,30 @@
+name: Automerge Bot
+
+on:
+  pull_request:
+    types:
+      - labeled
+      - synchronize
+      - opened
+      - edited
+      - ready_for_review
+  check_suite:
+    types:
+      - completed
+  status: {}
+
+jobs:
+  automerge:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: automerge
+        uses: "pascalgn/automerge-action@v0.16.3"
+        env:
+          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+          # 只有打上这个标签的 PR 才会自动合并，安全第一
+          MERGE_LABELS: "automerge"
+          MERGE_METHOD: "squash"
+          MERGE_COMMIT_MESSAGE: "pull-request-title"
