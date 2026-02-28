@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>地缘冲突下宏观市场与资产配置实时看板</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         .card-enter {
             opacity: 0;
@@ -44,7 +45,7 @@
 
                 <!-- Live Market Data -->
                 <section class="bg-white rounded-xl shadow-md p-6 card-enter delay-100">
-                    <h2 class="text-xl font-bold border-b pb-2 mb-4">实时核心指标</h2>
+                    <h2 class="text-xl font-bold border-b pb-2 mb-4">实时核心指标 (7日趋势)</h2>
                     <div id="market-data-container" class="space-y-4">
                         <div class="animate-pulse space-y-4">
                             <div class="h-10 bg-gray-200 rounded"></div>
@@ -121,6 +122,16 @@
                 </div>
 
             </div>
+        </div>
+
+        <!-- Large Historical Chart Section -->
+        <div class="mt-8 card-enter delay-300">
+            <section class="bg-white rounded-xl shadow-md p-6">
+                <h2 class="text-xl font-bold border-b pb-2 mb-4">历史趋势对比 (过去7天)</h2>
+                <div class="relative w-full h-80">
+                    <canvas id="main-history-chart"></canvas>
+                </div>
+            </section>
         </div>
     </div>
 
