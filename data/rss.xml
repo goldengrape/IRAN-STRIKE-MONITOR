@@ -13,6 +13,18 @@
             <guid isPermaLink="false">2026-02-28T21:02:07.460420+00:00</guid>
         </item>
         <item>
+            <title>Market Data Update: Sat, 28 Feb 2026 20:22:32 +0000</title>
+            <description>VIX: 19.86 | Brent Oil: 72.48 $/bbl | 10Y Yield: 3.96 % | SPY Weekly Change: -0.5 % | HYG Weekly Change: -0.35 %</description>
+            <pubDate>Sat, 28 Feb 2026 20:22:32 +0000</pubDate>
+            <guid isPermaLink="false">2026-02-28T20:22:32.080258+00:00</guid>
+        </item>
+        <item>
+            <title>Market Data Update: Sat, 28 Feb 2026 20:22:18 +0000</title>
+            <description>Error fetching data: name 'pd' is not defined</description>
+            <pubDate>Sat, 28 Feb 2026 20:22:18 +0000</pubDate>
+            <guid isPermaLink="false">2026-02-28T20:22:18.899564+00:00</guid>
+        </item>
+        <item>
             <title>Market Data Update: Sat, 28 Feb 2026 19:38:06 +0000</title>
             <description>VIX: 19.86 | Brent Oil: 72.48 $/bbl | 10Y Yield: 3.96 % | SPY Weekly Change: -0.5 % | HYG Weekly Change: -0.35 %</description>
             <pubDate>Sat, 28 Feb 2026 19:38:06 +0000</pubDate>

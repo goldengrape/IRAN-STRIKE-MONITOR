@@ -2,6 +2,7 @@ import yfinance as yf
 import json
 import datetime
 import os
+import pandas as pd
 
 def fetch_market_data():
     """
@@ -25,12 +26,26 @@ def fetch_market_data():
 
         # Get the latest close prices
         if 'Close' in hist_data.columns:
-            latest = hist_data['Close'].iloc[-1]
-            week_ago = hist_data['Close'].iloc[-6] if len(hist_data) >= 6 else hist_data['Close'].iloc[0]
+            close_data = hist_data['Close']
+            latest = close_data.iloc[-1]
+            week_ago = close_data.iloc[-6] if len(close_data) >= 6 else close_data.iloc[0]
         else:
             # Fallback for single ticker or different structure
-            latest = hist_data.iloc[-1]
-            week_ago = hist_data.iloc[-6] if len(hist_data) >= 6 else hist_data.iloc[0]
+            close_data = hist_data
+            latest = close_data.iloc[-1]
+            week_ago = close_data.iloc[-6] if len(close_data) >= 6 else close_data.iloc[0]
+
+        # Extract 7-day historical trend for charts (excluding today's incomplete data if we only want full days, or just take the last 7 rows)
+        last_7_days = close_data.tail(7)
+
+        historical_trends = {
+            "dates": [date.strftime("%Y-%m-%d") for date in last_7_days.index],
+            "VIX": [float(val) if not pd.isna(val) else 0 for val in last_7_days.get('^VIX', [0]*7)],
+            "Brent_Oil": [float(val) if not pd.isna(val) else 0 for val in last_7_days.get('BZ=F', [0]*7)],
+            "US_10Y_Yield": [float(val) if not pd.isna(val) else 0 for val in last_7_days.get('^TNX', [0]*7)],
+            "SPY": [float(val) if not pd.isna(val) else 0 for val in last_7_days.get('SPY', [0]*7)],
+            "HYG": [float(val) if not pd.isna(val) else 0 for val in last_7_days.get('HYG', [0]*7)]
+        }
 
         # Extract specific values safely
         vix = float(latest.get('^VIX', 0))
@@ -55,7 +70,8 @@ def fetch_market_data():
                 "US_10Y_Yield": {"value": round(tnx, 2), "threshold": 4.5, "unit": "%"},
                 "SPY_Weekly_Change": {"value": round(spy_weekly_drop, 2), "threshold": -3.0, "unit": "%"},
                 "HYG_Weekly_Change": {"value": round(hyg_drop, 2), "threshold": -1.0, "unit": "%"} # proxy for credit spread widening
-            }
+            },
+            "historical_trends": historical_trends
         }
     except Exception as e:
         print(f"Error fetching data: {e}")
@@ -69,7 +85,8 @@ def fetch_market_data():
                 "US_10Y_Yield": {"value": 0, "threshold": 4.5, "unit": "%"},
                 "SPY_Weekly_Change": {"value": 0, "threshold": -3.0, "unit": "%"},
                 "HYG_Weekly_Change": {"value": 0, "threshold": -1.0, "unit": "%"}
-            }
+            },
+            "historical_trends": {"dates": [], "VIX": [], "Brent_Oil": [], "US_10Y_Yield": [], "SPY": [], "HYG": []}
         }
 
     return data

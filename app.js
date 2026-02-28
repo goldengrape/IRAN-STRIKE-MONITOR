@@ -34,8 +34,11 @@ document.addEventListener("DOMContentLoaded", async () => {
         marketData = await response.json();
 
         updateLastUpdated(marketData.timestamp);
-        renderMarketData(marketData.indicators);
+        renderMarketData(marketData.indicators, marketData.historical_trends);
         renderActions(marketData.indicators, portfolio);
+        if (marketData.historical_trends) {
+            renderMainChart(marketData.historical_trends);
+        }
 
     } catch (err) {
         console.error("Failed to load market data", err);
@@ -49,37 +52,149 @@ document.addEventListener("DOMContentLoaded", async () => {
         UI.lastUpdated.textContent = "最后更新时间: " + date.toLocaleString("zh-CN", { timeZone: "Asia/Shanghai" });
     }
 
-    function renderMarketData(indicators) {
+    function renderMarketData(indicators, historicalTrends) {
         if (!indicators) return;
 
         const formatters = {
-            "VIX": { name: "VIX 恐慌指数", colorCheck: val => val > 20 ? "text-red-600 bg-red-100" : "text-green-600 bg-green-100" },
-            "Brent_Oil": { name: "布伦特原油", colorCheck: val => val > 90 ? "text-red-600 bg-red-100" : "text-gray-700 bg-gray-100" },
-            "US_10Y_Yield": { name: "美国 10年期国债收益率", colorCheck: val => val > 4.5 ? "text-orange-600 bg-orange-100" : "text-gray-700 bg-gray-100" },
-            "SPY_Weekly_Change": { name: "标普500 (周跌幅)", colorCheck: val => val < -3 ? "text-red-600 bg-red-100" : "text-green-600 bg-green-100" },
-            "HYG_Weekly_Change": { name: "高收益债 HYG (周变化)", colorCheck: val => val < -1 ? "text-red-600 bg-red-100" : "text-gray-700 bg-gray-100" }
+            "VIX": { name: "VIX 恐慌指数", trendKey: "VIX", colorCheck: val => val > 20 ? "text-red-600 bg-red-100" : "text-green-600 bg-green-100" },
+            "Brent_Oil": { name: "布伦特原油", trendKey: "Brent_Oil", colorCheck: val => val > 90 ? "text-red-600 bg-red-100" : "text-gray-700 bg-gray-100" },
+            "US_10Y_Yield": { name: "美国 10年期国债收益率", trendKey: "US_10Y_Yield", colorCheck: val => val > 4.5 ? "text-orange-600 bg-orange-100" : "text-gray-700 bg-gray-100" },
+            "SPY_Weekly_Change": { name: "标普500 (周跌幅)", trendKey: "SPY", colorCheck: val => val < -3 ? "text-red-600 bg-red-100" : "text-green-600 bg-green-100" },
+            "HYG_Weekly_Change": { name: "高收益债 HYG (周变化)", trendKey: "HYG", colorCheck: val => val < -1 ? "text-red-600 bg-red-100" : "text-gray-700 bg-gray-100" }
         };
 
         let html = '';
+        const chartDataMap = {};
+
         for (const [key, meta] of Object.entries(formatters)) {
             const data = indicators[key];
             if (!data) continue;
 
             const colorClasses = meta.colorCheck(data.value);
+            const chartId = `sparkline-${key}`;
+
+            // For weekly change we might just show the raw SPY/HYG trend in the background
+            const histData = historicalTrends && historicalTrends[meta.trendKey] ? historicalTrends[meta.trendKey] : [];
+            chartDataMap[chartId] = histData;
 
             html += `
-                <div class="flex justify-between items-center p-3 rounded-lg border border-gray-100 bg-gray-50">
-                    <div>
-                        <span class="font-medium text-gray-700 block">${meta.name}</span>
-                        <span class="text-xs text-gray-400">预警阈值: ${data.threshold}${data.unit}</span>
+                <div class="relative overflow-hidden p-3 rounded-lg border border-gray-100 bg-gray-50 flex flex-col justify-center">
+                    <div class="absolute bottom-0 left-0 w-full h-1/2 opacity-20 pointer-events-none">
+                        <canvas id="${chartId}"></canvas>
                     </div>
-                    <div class="px-3 py-1 rounded font-bold ${colorClasses}">
-                        ${data.value} ${data.unit}
+                    <div class="relative z-10 flex justify-between items-center">
+                        <div>
+                            <span class="font-medium text-gray-700 block">${meta.name}</span>
+                            <span class="text-xs text-gray-400">预警阈值: ${data.threshold}${data.unit}</span>
+                        </div>
+                        <div class="px-3 py-1 rounded font-bold ${colorClasses}">
+                            ${data.value} ${data.unit}
+                        </div>
                     </div>
                 </div>
             `;
         }
         UI.marketContainer.innerHTML = html;
+
+        // Render Sparklines
+        setTimeout(() => {
+            for (const [chartId, dataArray] of Object.entries(chartDataMap)) {
+                const ctx = document.getElementById(chartId);
+                if (ctx && dataArray.length > 0) {
+                    new Chart(ctx, {
+                        type: 'line',
+                        data: {
+                            labels: dataArray.map((_, i) => i),
+                            datasets: [{
+                                data: dataArray,
+                                borderColor: '#3b82f6', // blue-500
+                                borderWidth: 2,
+                                tension: 0.3,
+                                pointRadius: 0
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: { legend: { display: false }, tooltip: { enabled: false } },
+                            scales: { x: { display: false }, y: { display: false } }
+                        }
+                    });
+                }
+            }
+        }, 100);
+    }
+
+    function renderMainChart(historicalTrends) {
+        if (!historicalTrends || !historicalTrends.dates || historicalTrends.dates.length === 0) return;
+
+        const ctx = document.getElementById('main-history-chart');
+        if (!ctx) return;
+
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: historicalTrends.dates,
+                datasets: [
+                    {
+                        label: 'VIX 恐慌指数',
+                        data: historicalTrends.VIX,
+                        borderColor: '#ef4444', // red-500
+                        backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                        yAxisID: 'y',
+                        tension: 0.3
+                    },
+                    {
+                        label: '布伦特原油 ($/bbl)',
+                        data: historicalTrends.Brent_Oil,
+                        borderColor: '#f59e0b', // amber-500
+                        backgroundColor: 'rgba(245, 158, 11, 0.1)',
+                        yAxisID: 'y1',
+                        tension: 0.3
+                    },
+                    {
+                        label: '标普500',
+                        data: historicalTrends.SPY,
+                        borderColor: '#3b82f6', // blue-500
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                        yAxisID: 'y2',
+                        tension: 0.3,
+                        hidden: true // hide by default to avoid clutter
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                interaction: {
+                    mode: 'index',
+                    intersect: false,
+                },
+                scales: {
+                    x: {
+                        grid: { display: false }
+                    },
+                    y: {
+                        type: 'linear',
+                        display: true,
+                        position: 'left',
+                        title: { display: true, text: 'VIX' }
+                    },
+                    y1: {
+                        type: 'linear',
+                        display: true,
+                        position: 'right',
+                        title: { display: true, text: 'Oil ($)' },
+                        grid: { drawOnChartArea: false }
+                    },
+                    y2: {
+                        type: 'linear',
+                        display: false, // Only visible if dataset is shown
+                        position: 'right',
+                    }
+                }
+            }
+        });
     }
 
     function renderActions(indicators, currentPortfolio) {
