@@ -43,6 +43,21 @@
             <!-- Left Column: Market Data & Inputs -->
             <div class="lg:col-span-1 space-y-8">
 
+                <!-- Geopolitical State -->
+                <section class="bg-white rounded-xl shadow-md p-6 card-enter delay-100">
+                    <h2 class="text-xl font-bold border-b pb-2 mb-4">地缘风险状态</h2>
+                    <div class="space-y-4 text-sm">
+                        <div>
+                            <label class="block font-medium text-gray-700 mb-1">霍尔木兹海峡状态 (手动S4/S5触发器)</label>
+                            <select id="input-hormuz" class="w-full border-gray-300 rounded-md shadow-sm p-2 bg-gray-50 border focus:ring-blue-500 focus:border-blue-500">
+                                <option value="Normal" selected>正常通行 (S1-S3)</option>
+                                <option value="Warning">预警/局部干扰 (S3)</option>
+                                <option value="Blocked">通行受阻/保险飙升 (S4-S5)</option>
+                            </select>
+                        </div>
+                    </div>
+                </section>
+
                 <!-- Live Market Data -->
                 <section class="bg-white rounded-xl shadow-md p-6 card-enter delay-100">
                     <h2 class="text-xl font-bold border-b pb-2 mb-4">实时核心指标 (7日趋势)</h2>
@@ -101,6 +116,20 @@
 
             <!-- Right Column: Action Menu -->
             <div class="lg:col-span-2 space-y-8">
+
+                <!-- Scenario Probability Dashboard -->
+                <section class="bg-white rounded-xl shadow-md p-6 card-enter delay-200">
+                    <h2 class="text-xl font-bold border-b pb-2 mb-4 flex justify-between items-end">
+                        <span>情景概率评估</span>
+                        <span class="text-sm font-normal text-gray-500">基于数据自动推演</span>
+                    </h2>
+                    <div id="scenario-dashboard" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <!-- Scenario cards will be injected here by JS -->
+                        <div class="animate-pulse space-y-4 col-span-3">
+                            <div class="h-20 bg-gray-200 rounded"></div>
+                        </div>
+                    </div>
+                </section>
 
                 <section class="bg-white rounded-xl shadow-md p-6 card-enter delay-300">
                     <h2 class="text-xl font-bold border-b pb-2 mb-4 flex justify-between items-end">

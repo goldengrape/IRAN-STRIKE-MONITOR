@@ -4,17 +4,23 @@
         <title>Geopolitical Market Dashboard RSS Feed</title>
         <description>Daily updates on key macroeconomic indicators (VIX, Brent, US10Y, SPY, HYG) tracking geopolitical risks.</description>
         <link>https://github.com/jules-11467788464661651638/geopolitical-dashboard</link>
-        <lastBuildDate>Sat, 28 Feb 2026 21:02:07 +0000</lastBuildDate>
-        
+        <lastBuildDate>Sun, 01 Mar 2026 01:04:16 +0000</lastBuildDate>
+
         <item>
-            <title>Market Data Update: Sat, 28 Feb 2026 21:02:07 +0000</title>
-            <description>VIX: 19.86 | Brent Oil: 72.48 $/bbl | 10Y Yield: 3.96 % | SPY Weekly Change: -0.5 % | HYG Weekly Change: -0.35 %</description>
-            <pubDate>Sat, 28 Feb 2026 21:02:07 +0000</pubDate>
-            <guid isPermaLink="false">2026-02-28T21:02:07.460420+00:00</guid>
+            <title>Market Data Update: Sun, 01 Mar 2026 01:04:16 +0000</title>
+            <description>VIX: 19.86 | Brent Oil: 72.48 $/bbl | 10Y Yield: 3.96 % | SPY: 0.53 % | HYG: -0.19 % | Gold: 5230.5 | USD: 97.61 | BTC: 66680.66</description>
+            <pubDate>Sun, 01 Mar 2026 01:04:16 +0000</pubDate>
+            <guid isPermaLink="false">2026-03-01T01:04:16.231572+00:00</guid>
+        </item>
+        <item>
+            <title>Market Data Update: Sun, 01 Mar 2026 01:02:48 +0000</title>
+            <description>VIX: nan | Brent Oil: nan $/bbl | 10Y Yield: nan % | SPY: nan % | HYG: nan % | Gold: nan | USD: nan | BTC: 66821.77</description>
+            <pubDate>Sun, 01 Mar 2026 01:02:48 +0000</pubDate>
+            <guid isPermaLink="false">2026-03-01T01:02:48.179132+00:00</guid>
         </item>
         <item>
             <title>Market Data Update: Sat, 28 Feb 2026 20:22:32 +0000</title>
-            <description>VIX: 19.86 | Brent Oil: 72.48 $/bbl | 10Y Yield: 3.96 % | SPY Weekly Change: -0.5 % | HYG Weekly Change: -0.35 %</description>
+            <description>VIX: 19.86 | Brent Oil: 72.48 $/bbl | 10Y Yield: 3.96 % | SPY: -0.5 % | HYG: -0.35 % | Gold: 0 | USD: 0 | BTC: 0</description>
             <pubDate>Sat, 28 Feb 2026 20:22:32 +0000</pubDate>
             <guid isPermaLink="false">2026-02-28T20:22:32.080258+00:00</guid>
         </item>
@@ -26,13 +32,13 @@
         </item>
         <item>
             <title>Market Data Update: Sat, 28 Feb 2026 19:38:06 +0000</title>
-            <description>VIX: 19.86 | Brent Oil: 72.48 $/bbl | 10Y Yield: 3.96 % | SPY Weekly Change: -0.5 % | HYG Weekly Change: -0.35 %</description>
+            <description>VIX: 19.86 | Brent Oil: 72.48 $/bbl | 10Y Yield: 3.96 % | SPY: -0.5 % | HYG: -0.35 % | Gold: 0 | USD: 0 | BTC: 0</description>
             <pubDate>Sat, 28 Feb 2026 19:38:06 +0000</pubDate>
             <guid isPermaLink="false">2026-02-28T19:38:06.470554+00:00</guid>
         </item>
         <item>
             <title>Market Data Update: Sat, 28 Feb 2026 19:37:26 +0000</title>
-            <description>VIX: 19.86 | Brent Oil: 72.48 $/bbl | 10Y Yield: 3.96 % | SPY Weekly Change: -0.5 % | HYG Weekly Change: -0.35 %</description>
+            <description>VIX: 19.86 | Brent Oil: 72.48 $/bbl | 10Y Yield: 3.96 % | SPY: -0.5 % | HYG: -0.35 % | Gold: 0 | USD: 0 | BTC: 0</description>
             <pubDate>Sat, 28 Feb 2026 19:37:26 +0000</pubDate>
             <guid isPermaLink="false">2026-02-28T19:37:26.830788+00:00</guid>
         </item>

@@ -10,21 +10,39 @@ document.addEventListener("DOMContentLoaded", async () => {
     const UI = {
         marketContainer: document.getElementById("market-data-container"),
         actionsContainer: document.getElementById("actions-container"),
+        scenarioContainer: document.getElementById("scenario-dashboard"),
         lastUpdated: document.getElementById("last-updated"),
         inputs: {
             duration: document.getElementById("input-duration"),
             credit: document.getElementById("input-credit"),
             energy: document.getElementById("input-energy"),
             volatility: document.getElementById("input-volatility")
-        }
+        },
+        hormuzInput: document.getElementById("input-hormuz")
     };
+
+    // Load Hormuz status from local storage if available
+    const savedHormuz = localStorage.getItem("hormuz_status");
+    if (savedHormuz) {
+        UI.hormuzInput.value = savedHormuz;
+    }
 
     // Initialize Event Listeners for Portfolio Form
     Object.keys(UI.inputs).forEach(key => {
         UI.inputs[key].addEventListener("change", (e) => {
             portfolio[key] = e.target.value;
-            renderActions(marketData, portfolio);
+            if (marketData && marketData.indicators) {
+                renderActions(marketData.indicators, portfolio);
+            }
         });
+    });
+
+    UI.hormuzInput.addEventListener("change", (e) => {
+        localStorage.setItem("hormuz_status", e.target.value);
+        if (marketData && marketData.indicators) {
+            renderScenarios(marketData.indicators);
+            renderActions(marketData.indicators, portfolio);
+        }
     });
 
     try {
@@ -35,6 +53,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         updateLastUpdated(marketData.timestamp);
         renderMarketData(marketData.indicators, marketData.historical_trends);
+        renderScenarios(marketData.indicators);
         renderActions(marketData.indicators, portfolio);
         if (marketData.historical_trends) {
             renderMainChart(marketData.historical_trends);
@@ -58,12 +77,20 @@ document.addEventListener("DOMContentLoaded", async () => {
         const formatters = {
             "VIX": { name: "VIX 恐慌指数", trendKey: "VIX", colorCheck: val => val > 20 ? "text-red-600 bg-red-100" : "text-green-600 bg-green-100" },
             "Brent_Oil": { name: "布伦特原油", trendKey: "Brent_Oil", colorCheck: val => val > 90 ? "text-red-600 bg-red-100" : "text-gray-700 bg-gray-100" },
-            "US_10Y_Yield": { name: "美国 10年期国债收益率", trendKey: "US_10Y_Yield", colorCheck: val => val > 4.5 ? "text-orange-600 bg-orange-100" : "text-gray-700 bg-gray-100" },
+            "Gold": { name: "黄金价格", trendKey: "Gold", colorCheck: val => val > 2400 ? "text-amber-600 bg-amber-100" : "text-gray-700 bg-gray-100" },
+            "USD_Index": { name: "美元指数", trendKey: "USD_Index", colorCheck: val => val > 105 ? "text-blue-600 bg-blue-100" : "text-gray-700 bg-gray-100" },
+            "US_10Y_Yield": { name: "美国 10年期名义利率", trendKey: "US_10Y_Yield", colorCheck: val => val > 4.5 ? "text-orange-600 bg-orange-100" : "text-gray-700 bg-gray-100" },
+            "TIP_ETF": { name: "TIP ETF (通胀代理)", trendKey: "TIP", colorCheck: val => val > 110 ? "text-indigo-600 bg-indigo-100" : "text-gray-700 bg-gray-100" },
             "SPY_Weekly_Change": { name: "标普500 (周跌幅)", trendKey: "SPY", colorCheck: val => val < -3 ? "text-red-600 bg-red-100" : "text-green-600 bg-green-100" },
-            "HYG_Weekly_Change": { name: "高收益债 HYG (周变化)", trendKey: "HYG", colorCheck: val => val < -1 ? "text-red-600 bg-red-100" : "text-gray-700 bg-gray-100" }
+            "QQQ_ETF": { name: "纳斯达克 100", trendKey: "QQQ", colorCheck: val => val < 400 ? "text-red-600 bg-red-100" : "text-gray-700 bg-gray-100" },
+            "ITA_ETF": { name: "国防军工 ITA", trendKey: "ITA", colorCheck: val => val > 140 ? "text-green-600 bg-green-100" : "text-gray-700 bg-gray-100" },
+            "CIBR_ETF": { name: "网络安全 CIBR", trendKey: "CIBR", colorCheck: val => val > 65 ? "text-green-600 bg-green-100" : "text-gray-700 bg-gray-100" },
+            "XLP_ETF": { name: "必需消费品 XLP", trendKey: "XLP", colorCheck: val => val < 70 ? "text-red-600 bg-red-100" : "text-gray-700 bg-gray-100" },
+            "HYG_Weekly_Change": { name: "高收益债 HYG (周变化)", trendKey: "HYG", colorCheck: val => val < -1 ? "text-red-600 bg-red-100" : "text-gray-700 bg-gray-100" },
+            "BTC": { name: "比特币", trendKey: "BTC", colorCheck: val => val < 60000 ? "text-red-600 bg-red-100" : "text-purple-600 bg-purple-100" }
         };
 
-        let html = '';
+        let html = '<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-4">';
         const chartDataMap = {};
 
         for (const [key, meta] of Object.entries(formatters)) {
@@ -78,22 +105,23 @@ document.addEventListener("DOMContentLoaded", async () => {
             chartDataMap[chartId] = histData;
 
             html += `
-                <div class="relative overflow-hidden p-3 rounded-lg border border-gray-100 bg-gray-50 flex flex-col justify-center">
-                    <div class="absolute bottom-0 left-0 w-full h-1/2 opacity-20 pointer-events-none">
-                        <canvas id="${chartId}"></canvas>
-                    </div>
-                    <div class="relative z-10 flex justify-between items-center">
+                <div class="relative overflow-hidden p-4 rounded-xl border border-gray-100 bg-white shadow-sm flex flex-col gap-2">
+                    <div class="flex justify-between items-start z-10 relative bg-white">
                         <div>
-                            <span class="font-medium text-gray-700 block">${meta.name}</span>
-                            <span class="text-xs text-gray-400">预警阈值: ${data.threshold}${data.unit}</span>
+                            <span class="font-bold text-gray-700 text-sm block">${meta.name}</span>
+                            <span class="text-xs text-gray-400">阈值: ${data.threshold}${data.unit}</span>
                         </div>
-                        <div class="px-3 py-1 rounded font-bold ${colorClasses}">
+                        <div class="px-2 py-1 rounded-lg font-bold text-sm ${colorClasses}">
                             ${data.value} ${data.unit}
                         </div>
+                    </div>
+                    <div class="relative w-full h-8 mt-1 pointer-events-none opacity-40">
+                        <canvas id="${chartId}"></canvas>
                     </div>
                 </div>
             `;
         }
+        html += '</div>';
         UI.marketContainer.innerHTML = html;
 
         // Render Sparklines
@@ -166,6 +194,18 @@ document.addEventListener("DOMContentLoaded", async () => {
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
+                layout: {
+                    padding: {
+                        top: 20
+                    }
+                },
+                plugins: {
+                    legend: {
+                        labels: {
+                            padding: 20
+                        }
+                    }
+                },
                 interaction: {
                     mode: 'index',
                     intersect: false,
@@ -178,33 +218,93 @@ document.addEventListener("DOMContentLoaded", async () => {
                         type: 'linear',
                         display: true,
                         position: 'left',
-                        title: { display: true, text: 'VIX' }
+                        title: { display: true, text: 'VIX' },
+                        grace: '10%'
                     },
                     y1: {
                         type: 'linear',
                         display: true,
                         position: 'right',
                         title: { display: true, text: 'Oil ($)' },
-                        grid: { drawOnChartArea: false }
+                        grid: { drawOnChartArea: false },
+                        grace: '10%'
                     },
                     y2: {
                         type: 'linear',
                         display: false, // Only visible if dataset is shown
                         position: 'right',
+                        grace: '10%'
                     }
                 }
             }
         });
     }
 
+    function renderScenarios(indicators) {
+        if (!indicators || !UI.scenarioContainer) return;
+
+        const oil = indicators.Brent_Oil?.value || 0;
+        const vix = indicators.VIX?.value || 0;
+        const hormuz = UI.hormuzInput.value;
+
+        // Basic probability logic based on thresholds
+        let probS1S3 = 70; // Default baseline (Noise/Limited)
+        let probS4 = 20; // Default baseline (Shipping)
+        let probS5 = 10; // Default baseline (Macro Shock)
+
+        if (hormuz === "Warning" || oil > 80) {
+            probS1S3 -= 20;
+            probS4 += 15;
+            probS5 += 5;
+        }
+
+        if (hormuz === "Blocked" || oil > 90) {
+            probS1S3 = 10;
+            probS4 = 60;
+            probS5 = 30;
+        }
+
+        if (vix > 30 && oil > 100) {
+            probS1S3 = 5;
+            probS4 = 35;
+            probS5 = 60;
+        }
+
+        const scenarios = [
+            { id: 'S1-S3', name: '噪音 / 局部冲突 (S1-S3)', prob: probS1S3, desc: '航运未实质受损，市场呈短暂避险后修复。', color: 'blue' },
+            { id: 'S4', name: '航运扰动 (S4)', prob: probS4, desc: '海峡通行受阻，供应链与保险费飙升。', color: 'orange' },
+            { id: 'S5', name: '宏观油价冲击 (S5)', prob: probS5, desc: '油价长期>90，通胀预期去锚，开启滞胀交易。', color: 'red' }
+        ];
+
+        let html = '';
+        scenarios.forEach(s => {
+            const isDominant = s.prob >= 50;
+            html += `
+                <div class="p-4 rounded-xl border ${isDominant ? `border-${s.color}-500 bg-${s.color}-50 shadow-md` : 'border-gray-200 bg-white opacity-70'} text-center transition-all">
+                    <h3 class="font-bold text-gray-800 text-sm mb-1">${s.name}</h3>
+                    <div class="text-3xl font-black text-${s.color}-600 mb-2">${s.prob}%</div>
+                    <p class="text-xs text-gray-500 leading-tight">${s.desc}</p>
+                </div>
+            `;
+        });
+        UI.scenarioContainer.innerHTML = html;
+    }
+
     function renderActions(indicators, currentPortfolio) {
         if (!indicators) return;
 
         // Extract values
-        const vix = indicators.VIX.value;
-        const oil = indicators.Brent_Oil.value;
-        const spyDrop = indicators.SPY_Weekly_Change.value;
-        const hygDrop = indicators.HYG_Weekly_Change.value; // Negative means stress
+        const vix = indicators.VIX?.value || 0;
+        const oil = indicators.Brent_Oil?.value || 0;
+        const spyDrop = indicators.SPY_Weekly_Change?.value || 0;
+        const hygDrop = indicators.HYG_Weekly_Change?.value || 0; // Negative means stress
+        const gold = indicators.Gold?.value || 0;
+        const usd = indicators.USD_Index?.value || 0;
+        const tip = indicators.TIP_ETF?.value || 0;
+
+        // Check if gold and USD are both high/rising (simple threshold proxy)
+        const safeHavenUp = gold > 2400 && usd > 103;
+        const tipUp = tip > 108; // threshold proxy
 
         // Definition of actions from the report
         const actions = [
@@ -233,10 +333,10 @@ document.addEventListener("DOMContentLoaded", async () => {
                 title: "增配TIPS (替代部分名义中长债)",
                 target: "担心通胀预期上移；持有较多名义久期",
                 effect: "对冲通胀预期上行风险",
-                triggerCondition: "由于缺乏T10YIE免费数据，使用油价>85作为代理指标",
-                triggered: oil > 85,
+                triggerCondition: "通胀预期(TIP)上移，或黄金与美元同步走强，或油价>85",
+                triggered: oil > 85 || safeHavenUp || tipUp,
                 portfolioMatch: currentPortfolio.duration === "high",
-                advice: "油价持续高位可能导致通胀预期(去锚)上行，你持有的长久期名义债承压，建议逐步替换部分为TIPS。"
+                advice: "宏观避险与通胀预期(去锚)信号显现，你持有的长久期名义债承压，建议逐步替换部分为TIPS。"
             },
             {
                 id: "energy_hedge",
