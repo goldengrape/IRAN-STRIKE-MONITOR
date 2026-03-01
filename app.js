@@ -75,19 +75,19 @@ document.addEventListener("DOMContentLoaded", async () => {
         if (!indicators) return;
 
         const formatters = {
-            "VIX": { name: "VIX 恐慌指数", trendKey: "VIX", colorCheck: val => val > 20 ? "text-red-600 bg-red-100" : "text-green-600 bg-green-100" },
-            "Brent_Oil": { name: "布伦特原油", trendKey: "Brent_Oil", colorCheck: val => val > 90 ? "text-red-600 bg-red-100" : "text-gray-700 bg-gray-100" },
-            "Gold": { name: "黄金价格", trendKey: "Gold", colorCheck: val => val > 2400 ? "text-amber-600 bg-amber-100" : "text-gray-700 bg-gray-100" },
-            "USD_Index": { name: "美元指数", trendKey: "USD_Index", colorCheck: val => val > 105 ? "text-blue-600 bg-blue-100" : "text-gray-700 bg-gray-100" },
-            "US_10Y_Yield": { name: "美国 10年期名义利率", trendKey: "US_10Y_Yield", colorCheck: val => val > 4.5 ? "text-orange-600 bg-orange-100" : "text-gray-700 bg-gray-100" },
-            "TIP_ETF": { name: "TIP ETF (通胀代理)", trendKey: "TIP", colorCheck: val => val > 110 ? "text-indigo-600 bg-indigo-100" : "text-gray-700 bg-gray-100" },
-            "SPY_Weekly_Change": { name: "标普500 (周跌幅)", trendKey: "SPY", colorCheck: val => val < -3 ? "text-red-600 bg-red-100" : "text-green-600 bg-green-100" },
-            "QQQ_ETF": { name: "纳斯达克 100", trendKey: "QQQ", colorCheck: val => val < 400 ? "text-red-600 bg-red-100" : "text-gray-700 bg-gray-100" },
-            "ITA_ETF": { name: "国防军工 ITA", trendKey: "ITA", colorCheck: val => val > 140 ? "text-green-600 bg-green-100" : "text-gray-700 bg-gray-100" },
-            "CIBR_ETF": { name: "网络安全 CIBR", trendKey: "CIBR", colorCheck: val => val > 65 ? "text-green-600 bg-green-100" : "text-gray-700 bg-gray-100" },
-            "XLP_ETF": { name: "必需消费品 XLP", trendKey: "XLP", colorCheck: val => val < 70 ? "text-red-600 bg-red-100" : "text-gray-700 bg-gray-100" },
-            "HYG_Weekly_Change": { name: "高收益债 HYG (周变化)", trendKey: "HYG", colorCheck: val => val < -1 ? "text-red-600 bg-red-100" : "text-gray-700 bg-gray-100" },
-            "BTC": { name: "比特币", trendKey: "BTC", colorCheck: val => val < 60000 ? "text-red-600 bg-red-100" : "text-purple-600 bg-purple-100" }
+            "VIX": { name: "VIX 恐慌指数", desc: "衡量股市短期波动率与恐慌情绪。>20意味着风险偏好显著下降。", trendKey: "VIX", colorCheck: val => val > 20 ? "text-red-600 bg-red-100" : "text-green-600 bg-green-100" },
+            "Brent_Oil": { name: "布伦特原油", desc: "全球油价基准。地缘冲突最直接受体，>90可能引发通胀反弹。", trendKey: "Brent_Oil", colorCheck: val => val > 90 ? "text-red-600 bg-red-100" : "text-gray-700 bg-gray-100" },
+            "Gold": { name: "黄金价格", desc: "传统避险资产。在真实利率下行与地缘危机时往往表现强势。", trendKey: "Gold", colorCheck: val => val > 2400 ? "text-amber-600 bg-amber-100" : "text-gray-700 bg-gray-100" },
+            "USD_Index": { name: "美元指数", desc: "衡量美元对一篮子货币汇率。危机初期常受避险资金回流支撑。", trendKey: "USD_Index", colorCheck: val => val > 105 ? "text-blue-600 bg-blue-100" : "text-gray-700 bg-gray-100" },
+            "US_10Y_Yield": { name: "美国 10年期名义利率", desc: "全球资产定价之锚。油价上涨可能推升通胀预期，从而拉高此利率。", trendKey: "US_10Y_Yield", colorCheck: val => val > 4.5 ? "text-orange-600 bg-orange-100" : "text-gray-700 bg-gray-100" },
+            "TIP_ETF": { name: "TIP ETF (通胀代理)", desc: "与通胀挂钩的国债ETF。当市场预期通胀将持续恶化时更具防御力。", trendKey: "TIP", colorCheck: val => val > 110 ? "text-indigo-600 bg-indigo-100" : "text-gray-700 bg-gray-100" },
+            "SPY_Weekly_Change": { name: "标普500 (周跌幅)", desc: "美股大盘风向标。受流动性与盈利预期双重影响。", trendKey: "SPY", colorCheck: val => val < -3 ? "text-red-600 bg-red-100" : "text-green-600 bg-green-100" },
+            "QQQ_ETF": { name: "纳斯达克 100", desc: "高科技与成长股代表。对长端利率上升（如通胀去锚）极为敏感。", trendKey: "QQQ", colorCheck: val => val < 400 ? "text-red-600 bg-red-100" : "text-gray-700 bg-gray-100" },
+            "ITA_ETF": { name: "国防军工 ITA", desc: "国防军工板块ETF。地缘冲突加剧时常有资金避险流入。", trendKey: "ITA", colorCheck: val => val > 140 ? "text-green-600 bg-green-100" : "text-gray-700 bg-gray-100" },
+            "CIBR_ETF": { name: "网络安全 CIBR", desc: "网络安全ETF。现代冲突常伴随网络战预期，可能获短期支撑。", trendKey: "CIBR", colorCheck: val => val > 65 ? "text-green-600 bg-green-100" : "text-gray-700 bg-gray-100" },
+            "XLP_ETF": { name: "必需消费品 XLP", desc: "防御型板块。经济不确定性上升时相较于可选消费品更抗跌。", trendKey: "XLP", colorCheck: val => val < 70 ? "text-red-600 bg-red-100" : "text-gray-700 bg-gray-100" },
+            "HYG_Weekly_Change": { name: "高收益债 HYG (周变化)", desc: "高收益公司债ETF，衡量市场信用风险。剧烈下跌意味融资条件收紧。", trendKey: "HYG", colorCheck: val => val < -1 ? "text-red-600 bg-red-100" : "text-gray-700 bg-gray-100" },
+            "BTC": { name: "比特币", desc: "高风险贝塔资产。部分投资者视其为对冲法币体系风险的数字黄金。", trendKey: "BTC", colorCheck: val => val < 60000 ? "text-red-600 bg-red-100" : "text-purple-600 bg-purple-100" }
         };
 
         let html = '<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-4">';
@@ -105,10 +105,11 @@ document.addEventListener("DOMContentLoaded", async () => {
             chartDataMap[chartId] = histData;
 
             html += `
-                <div class="relative overflow-hidden p-4 rounded-xl border border-gray-100 bg-white shadow-sm flex flex-col gap-2">
+                <div class="relative overflow-hidden p-4 rounded-xl border border-gray-100 bg-white shadow-sm flex flex-col gap-2 group">
                     <div class="flex justify-between items-start z-10 relative bg-white">
                         <div>
                             <span class="font-bold text-gray-700 text-sm block">${meta.name}</span>
+                            <span class="text-[11px] text-gray-400 hidden group-hover:block transition-opacity">${meta.desc}</span>
                             <span class="text-xs text-gray-400">阈值: ${data.threshold}${data.unit}</span>
                         </div>
                         <div class="px-2 py-1 rounded-lg font-bold text-sm ${colorClasses}">
