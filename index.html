@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>地缘冲突下宏观市场与资产配置实时看板</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .card-enter {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.5s forwards ease-out;
+        }
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .delay-100 { animation-delay: 100ms; }
+        .delay-200 { animation-delay: 200ms; }
+        .delay-300 { animation-delay: 300ms; }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans min-h-screen">
+    <div class="max-w-6xl mx-auto px-4 py-8">
+
+        <!-- Header -->
+        <header class="mb-10 text-center card-enter">
+            <h1 class="text-4xl font-bold text-gray-900 mb-2">地缘冲突与宏观市场实时看板</h1>
+            <p class="text-gray-500">基于最新数据驱动的组合配置与动作预警</p>
+            <p class="text-sm text-gray-400 mt-1" id="last-updated">数据更新中...</p>
+            <a href="data/rss.xml" class="inline-block mt-3 text-sm text-blue-600 hover:text-blue-800 hover:underline flex items-center justify-center gap-1">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-rss"><path d="M4 11a9 9 0 0 1 9 9"/><path d="M4 4a16 16 0 0 1 16 16"/><circle cx="5" cy="19" r="1"/></svg>
+                RSS 订阅源
+            </a>
+        </header>
+
+        <!-- Main Content -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+            <!-- Left Column: Market Data & Inputs -->
+            <div class="lg:col-span-1 space-y-8">
+
+                <!-- Geopolitical State -->
+                <section class="bg-white rounded-xl shadow-md p-6 card-enter delay-100">
+                    <h2 class="text-xl font-bold border-b pb-2 mb-4">地缘风险状态</h2>
+                    <div class="space-y-4 text-sm">
+                        <div>
+                            <label class="block font-medium text-gray-700 mb-1">霍尔木兹海峡状态 (手动S4/S5触发器)</label>
+                            <select id="input-hormuz" class="w-full border-gray-300 rounded-md shadow-sm p-2 bg-gray-50 border focus:ring-blue-500 focus:border-blue-500">
+                                <option value="Normal" selected>正常通行 (S1-S3)</option>
+                                <option value="Warning">预警/局部干扰 (S3)</option>
+                                <option value="Blocked">通行受阻/保险飙升 (S4-S5)</option>
+                            </select>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Live Market Data -->
+                <section class="bg-white rounded-xl shadow-md p-6 card-enter delay-100">
+                    <h2 class="text-xl font-bold border-b pb-2 mb-4">实时核心指标 (7日趋势)</h2>
+                    <div id="market-data-container" class="space-y-4">
+                        <div class="animate-pulse space-y-4">
+                            <div class="h-10 bg-gray-200 rounded"></div>
+                            <div class="h-10 bg-gray-200 rounded"></div>
+                            <div class="h-10 bg-gray-200 rounded"></div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Portfolio Diagnostics Form -->
+                <section class="bg-white rounded-xl shadow-md p-6 card-enter delay-200">
+                    <h2 class="text-xl font-bold border-b pb-2 mb-4">组合暴露诊断</h2>
+                    <form id="portfolio-form" class="space-y-4 text-sm">
+
+                        <div>
+                            <label class="block font-medium text-gray-700 mb-1">久期暴露 (Duration)</label>
+                            <select id="input-duration" class="w-full border-gray-300 rounded-md shadow-sm p-2 bg-gray-50 border focus:ring-blue-500 focus:border-blue-500">
+                                <option value="low">低 (短端为主/现金多)</option>
+                                <option value="medium" selected>中 (均衡配置)</option>
+                                <option value="high">高 (大量长端名义债)</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block font-medium text-gray-700 mb-1">信用暴露 (Credit)</label>
+                            <select id="input-credit" class="w-full border-gray-300 rounded-md shadow-sm p-2 bg-gray-50 border focus:ring-blue-500 focus:border-blue-500">
+                                <option value="low" selected>低 (投资级/国债为主)</option>
+                                <option value="high">高 (高收益债/高杠杆行业敞口多)</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block font-medium text-gray-700 mb-1">能源敏感度 (Energy Sensitivity)</label>
+                            <select id="input-energy" class="w-full border-gray-300 rounded-md shadow-sm p-2 bg-gray-50 border focus:ring-blue-500 focus:border-blue-500">
+                                <option value="beneficiary">受益 (持有较多能源/资源股)</option>
+                                <option value="neutral" selected>中性 (指数基准)</option>
+                                <option value="vulnerable">受害 (重仓航空/化工/运输)</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block font-medium text-gray-700 mb-1">波动率暴露 (Volatility)</label>
+                            <select id="input-volatility" class="w-full border-gray-300 rounded-md shadow-sm p-2 bg-gray-50 border focus:ring-blue-500 focus:border-blue-500">
+                                <option value="hedged">已对冲 (有Put/Collar保护)</option>
+                                <option value="normal" selected>正常 (大盘/价值为主)</option>
+                                <option value="high">高 (高β/小盘/高估值成长重仓)</option>
+                            </select>
+                        </div>
+
+                    </form>
+                </section>
+            </div>
+
+            <!-- Right Column: Action Menu -->
+            <div class="lg:col-span-2 space-y-8">
+
+                <!-- Scenario Probability Dashboard -->
+                <section class="bg-white rounded-xl shadow-md p-6 card-enter delay-200">
+                    <h2 class="text-xl font-bold border-b pb-2 mb-4 flex justify-between items-end">
+                        <span>情景概率评估</span>
+                        <span class="text-sm font-normal text-gray-500">基于数据自动推演</span>
+                    </h2>
+                    <div id="scenario-dashboard" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <!-- Scenario cards will be injected here by JS -->
+                        <div class="animate-pulse space-y-4 col-span-3">
+                            <div class="h-20 bg-gray-200 rounded"></div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="bg-white rounded-xl shadow-md p-6 card-enter delay-300">
+                    <h2 class="text-xl font-bold border-b pb-2 mb-4 flex justify-between items-end">
+                        <span>动作菜单 (If-Then 触发器)</span>
+                        <span class="text-sm font-normal text-gray-500">基于最新数据与您的组合自动诊断</span>
+                    </h2>
+
+                    <div id="actions-container" class="space-y-4">
+                        <!-- Actions will be injected here by JS -->
+                        <div class="text-center text-gray-500 py-10">
+                            正在结合数据进行诊断分析...
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Notice -->
+                <div class="text-xs text-gray-400 p-4 bg-gray-100 rounded-lg">
+                    <p><strong>风险提示：</strong>本看板提供的是框架化、可审计的分析模板与通用策略动作菜单，不构成对您个人账户的投资建议。地缘冲突属于高不确定性事件。数据来自开源接口(Yahoo Finance)每日更新一次。</p>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Large Historical Chart Section -->
+        <div class="mt-8 card-enter delay-300">
+            <section class="bg-white rounded-xl shadow-md p-6">
+                <h2 class="text-xl font-bold border-b pb-2 mb-4">历史趋势对比 (过去7天)</h2>
+                <div class="relative w-full h-80">
+                    <canvas id="main-history-chart"></canvas>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
