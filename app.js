@@ -78,18 +78,18 @@ document.addEventListener("DOMContentLoaded", async () => {
             chartDataMap[chartId] = histData;
 
             html += `
-                <div class="relative overflow-hidden p-4 rounded-xl border border-gray-100 bg-white shadow-sm flex flex-col gap-2">
-                    <div class="flex justify-between items-start z-10 relative bg-white">
+                <div class="relative overflow-hidden p-3 rounded-lg border border-gray-100 bg-gray-50 flex flex-col justify-center">
+                    <div class="absolute bottom-0 left-0 w-full h-1/2 opacity-20 pointer-events-none">
+                        <canvas id="${chartId}"></canvas>
+                    </div>
+                    <div class="relative z-10 flex justify-between items-center">
                         <div>
-                            <span class="font-bold text-gray-700 text-lg block">${meta.name}</span>
-                            <span class="text-sm text-gray-400">预警阈值: ${data.threshold}${data.unit}</span>
+                            <span class="font-medium text-gray-700 block">${meta.name}</span>
+                            <span class="text-xs text-gray-400">预警阈值: ${data.threshold}${data.unit}</span>
                         </div>
-                        <div class="px-3 py-1 rounded-lg font-bold text-lg ${colorClasses}">
+                        <div class="px-3 py-1 rounded font-bold ${colorClasses}">
                             ${data.value} ${data.unit}
                         </div>
-                    </div>
-                    <div class="relative w-full h-10 mt-1 pointer-events-none opacity-40">
-                        <canvas id="${chartId}"></canvas>
                     </div>
                 </div>
             `;
@@ -166,18 +166,6 @@ document.addEventListener("DOMContentLoaded", async () => {
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
-                layout: {
-                    padding: {
-                        top: 20
-                    }
-                },
-                plugins: {
-                    legend: {
-                        labels: {
-                            padding: 20
-                        }
-                    }
-                },
                 interaction: {
                     mode: 'index',
                     intersect: false,
@@ -190,22 +178,19 @@ document.addEventListener("DOMContentLoaded", async () => {
                         type: 'linear',
                         display: true,
                         position: 'left',
-                        title: { display: true, text: 'VIX' },
-                        grace: '10%'
+                        title: { display: true, text: 'VIX' }
                     },
                     y1: {
                         type: 'linear',
                         display: true,
                         position: 'right',
                         title: { display: true, text: 'Oil ($)' },
-                        grid: { drawOnChartArea: false },
-                        grace: '10%'
+                        grid: { drawOnChartArea: false }
                     },
                     y2: {
                         type: 'linear',
                         display: false, // Only visible if dataset is shown
                         position: 'right',
-                        grace: '10%'
                     }
                 }
             }
