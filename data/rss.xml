@@ -4,8 +4,14 @@
         <title>Geopolitical Market Dashboard RSS Feed</title>
         <description>Daily updates on key macroeconomic indicators (VIX, Brent, US10Y, SPY, HYG) tracking geopolitical risks.</description>
         <link>https://github.com/jules-11467788464661651638/geopolitical-dashboard</link>
-        <lastBuildDate>Fri, 08 May 2026 21:20:21 +0000</lastBuildDate>
+        <lastBuildDate>Sat, 09 May 2026 21:13:49 +0000</lastBuildDate>
         
+        <item>
+            <title>Market Data Update: Sat, 09 May 2026 21:13:49 +0000</title>
+            <description>VIX: 17.19 | Brent Oil: 101.29 $/bbl | 10Y Yield: 4.36 % | SPY: 2.73 % | HYG: 0.43 % | Gold: 4720.4 | USD: 97.84 | BTC: 80854.21</description>
+            <pubDate>Sat, 09 May 2026 21:13:49 +0000</pubDate>
+            <guid isPermaLink="false">2026-05-09T21:13:49.733304+00:00</guid>
+        </item>
         <item>
             <title>Market Data Update: Fri, 08 May 2026 21:20:21 +0000</title>
             <description>VIX: 17.19 | Brent Oil: 100.49 $/bbl | 10Y Yield: 4.36 % | SPY: 2.35 % | HYG: 0.1 % | Gold: 4723.7 | USD: 97.84 | BTC: 80202.61</description>
@@ -179,12 +185,6 @@
             <description>VIX: 19.23 | Brent Oil: 94.29 $/bbl | 10Y Yield: 4.32 % | SPY: 3.6 % | HYG: 0.5 % | Gold: 4772.9 | USD: 98.7 | BTC: 73238.99</description>
             <pubDate>Fri, 10 Apr 2026 21:09:16 +0000</pubDate>
             <guid isPermaLink="false">2026-04-10T21:09:16.600750+00:00</guid>
-        </item>
-        <item>
-            <title>Market Data Update: Thu, 09 Apr 2026 21:14:08 +0000</title>
-            <description>VIX: 19.49 | Brent Oil: 96.44 $/bbl | 10Y Yield: 4.29 % | SPY: 3.67 % | HYG: 0.9 % | Gold: 4790.5 | USD: 98.77 | BTC: 72236.1</description>
-            <pubDate>Thu, 09 Apr 2026 21:14:08 +0000</pubDate>
-            <guid isPermaLink="false">2026-04-09T21:14:08.775583+00:00</guid>
         </item>
     </channel>
 </rss>
